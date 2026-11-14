@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>داشبورد پروژه بلاگری</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6ef; --bg2:#f3ead9; --card:#ffffff; --card2:#fffaf0;
+    --ink:#2b1d12; --ink2:#6b5744; --ink3:#9a8468;
+    --line:#e8dbc2; --line2:#dcc9a3;
+    --brand:#8a4b1f; --brand2:#b7792e; --accent:#c47a1a;
+    --green:#1f7a4d; --green-bg:#e3f2e7;
+    --amber:#9a6a00; --amber-bg:#fdf0cd;
+    --red:#a83a2a; --red-bg:#fbe7e2;
+    --blue:#2f5f7a; --blue-bg:#e2edf3;
+    --gray-bg:#efe9dd;
+    --shadow:0 1px 3px rgba(90,55,10,.08),0 8px 24px rgba(90,55,10,.06);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#17120d; --bg2:#1f1811; --card:#241b12; --card2:#2a2015;
+      --ink:#f3e8d5; --ink2:#c9b394; --ink3:#9a8468;
+      --line:#3d2f1e; --line2:#544026;
+      --brand:#e0a05a; --brand2:#c98d3e; --accent:#e0a05a;
+      --green:#5ec98d; --green-bg:#1c3325;
+      --amber:#e8c05a; --amber-bg:#3a2f14;
+      --red:#f08a76; --red-bg:#3d231d;
+      --blue:#8ec3dd; --blue-bg:#1d2f3a;
+      --gray-bg:#2e2518;
+      --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:"Vazirmatn",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:36px}
+  a{color:var(--brand)}
+  .wrap{max-width:1060px;margin:0 auto;padding:20px 16px 48px}
+  /* header */
+  .hero{background:var(--brand);color:#fff8ec;border-radius:18px;padding:22px 22px 20px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset-inline-start:-40px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08)}
+  .hero h1{margin:0;font-size:26px;font-weight:900;line-height:1.3;position:relative;z-index:1}
+  .hero p{margin:6px 0 0;color:#f3ddba;font-size:14px;position:relative;z-index:1;max-width:640px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative;z-index:1}
+  .hero-meta span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:600}
+  /* brand picker */
+  .brandbar{position:sticky;top:10px;z-index:20;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:8px 10px;box-shadow:var(--shadow);margin-bottom:14px}
+  .brandbar .brandbar-lbl{font-weight:800;font-size:13px;color:var(--ink2);padding-inline-start:6px}
+  .brandbar button{font-family:inherit;border:1px solid var(--line2);background:transparent;color:var(--ink2);border-radius:999px;padding:6px 16px;font-size:13.5px;font-weight:800;cursor:pointer}
+  .brandbar button.on{background:var(--brand);border-color:var(--brand);color:#fff8ec}
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 13px;box-shadow:var(--shadow)}
+  .kpi .num{font-size:32px;font-weight:900;line-height:1;color:var(--ink)}
+  .kpi .num small{font-size:15px;color:var(--ink3);font-weight:700}
+  .kpi .lbl{font-weight:800;font-size:13.5px;margin-top:6px}
+  .kpi .sub{color:var(--ink2);font-size:12.5px;margin-top:2px;line-height:1.6}
+  .kpi.hl{border-color:var(--brand2);background:var(--card2)}
+  /* progress */
+  .goal{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-top:12px}
+  .goal-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .goal-top h2{margin:0;font-size:16px;font-weight:900}
+  .goal-top .pct{font-weight:900;color:var(--brand);font-size:20px}
+  .bar{height:12px;background:var(--gray-bg);border-radius:999px;overflow:hidden;margin-top:12px;display:flex}
+  .bar i{display:block;height:100%}
+  .bar .b1{background:var(--brand2)} .bar .b2{background:#d9a94e}
+  .goal-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--ink2)}
+  .goal-legend b{color:var(--ink)}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-inline-end:5px}
+  /* sections */
+  section{margin-top:26px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .sec-head h2{margin:0;font-size:18px;font-weight:900}
+  .sec-head p{margin:0;color:var(--ink2);font-size:13px}
+  .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:12px}
+  .grid2b{display:grid;grid-template-columns:.85fr 1.15fr;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 10px;font-size:15px;font-weight:900}
+  /* funnel */
+  .funnel{display:flex;flex-direction:column;gap:7px}
+  .frow{display:flex;align-items:center;gap:10px}
+  .frow .fl{width:118px;flex:none;font-size:13px;font-weight:700;color:var(--ink2);text-align:left}
+  .frow .ft{flex:1;background:var(--gray-bg);border-radius:8px;height:34px;position:relative;overflow:hidden}
+  .frow .ft i{position:absolute;inset:0;inset-inline-end:auto;background:var(--brand2);border-radius:8px}
+  .frow .ft i.g{background:var(--green)} .frow .ft i.a{background:#d9a94e}
+  .frow .fv{width:44px;flex:none;font-weight:900;font-size:16px}
+  .frow .fn{font-size:11.5px;color:var(--ink3)}
+  /* batches */
+  .batch{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .batch:last-child{border-bottom:0;padding-bottom:2px}
+  .bnum{flex:none;width:44px;height:44px;border-radius:12px;background:var(--bg2);border:1px solid var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+  .bnum b{font-size:16px}.bnum span{font-size:10px;color:var(--ink2);font-weight:700}
+  .batch .bt{flex:1;min-width:0}
+  .batch .bt b{font-size:14px}
+  .batch .bt p{margin:2px 0 0;color:var(--ink2);font-size:12.5px;line-height:1.65}
+  .batch .bd{flex:none;text-align:left}
+  /* badges */
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:800;white-space:nowrap}
+  .bg-green{background:var(--green-bg);color:var(--green)}
+  .bg-amber{background:var(--amber-bg);color:var(--amber)}
+  .bg-red{background:var(--red-bg);color:var(--red)}
+  .bg-blue{background:var(--blue-bg);color:var(--blue)}
+  .bg-gray{background:var(--gray-bg);color:var(--ink2)}
+  /* table */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+  th{background:var(--bg2);text-align:right;padding:11px 14px;font-size:12.5px;color:var(--ink2);font-weight:800;border-bottom:1px solid var(--line)}
+  td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  .handle{font-weight:800;direction:ltr;display:inline-block}
+  td .who{color:var(--ink2);font-size:12.5px}
+  /* filters */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .filters button{font-family:inherit;border:1px solid var(--line2);background:var(--card);color:var(--ink2);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer}
+  .filters button.on{background:var(--brand);border-color:var(--brand);color:#fff8ec}
+  .filters input{font-family:inherit;border:1px solid var(--line2);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:13px;min-width:170px}
+  /* lists */
+  ul.tick{list-style:none;margin:0;padding:0}
+  ul.tick li{padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px;display:flex;gap:9px}
+  ul.tick li:last-child{border-bottom:0}
+  ul.tick li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px}
+  ul.tick li b{font-weight:800}
+  .rule{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .rule:last-child{border-bottom:0}
+  .rule .rn{flex:none;width:26px;height:26px;border-radius:8px;background:var(--bg2);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:var(--brand)}
+  .note{background:var(--amber-bg);border:1px solid var(--line2);border-radius:var(--radius);padding:14px 16px;font-size:13.5px;margin-top:12px}
+  .note b{color:var(--amber)}
+  footer{margin-top:30px;color:var(--ink3);font-size:12.5px;text-align:center;line-height:1.9}
+  .cards-stack{display:grid;gap:12px}
+  /* Zago Bitaruta */
+  .divider{margin:38px 0 0;border-top:2px solid var(--line2);padding-top:6px}
+  .divider span{display:block;text-align:center;color:var(--ink3);font-size:12.5px;font-weight:700;margin-top:6px}
+  .hero-zago{background:#7c1d1d}
+  .hero-zago p{color:#f6d9c9}
+  .kpis5{grid-template-columns:repeat(5,1fr)}
+  .dm-box{background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:16px 18px;font-size:14px;line-height:1.9;white-space:pre-line}
+  .step-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:8px;align-items:stretch;margin-top:4px}
+  .step-flow .sf{background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:12px;text-align:center;font-size:13px;line-height:1.65}
+  .step-flow .sf b{display:block;font-size:13.5px}
+  .step-flow .arr{align-self:center;color:var(--ink3);font-weight:900}
+  @media (max-width:760px){
+    .kpis,.kpis5{grid-template-columns:1fr 1fr}
+    .step-flow{grid-template-columns:1fr}
+    .step-flow .arr{transform:rotate(90deg);justify-self:center}
+    .grid2,.grid2b{grid-template-columns:1fr}
+    .hero h1{font-size:22px}
+    .frow .fl{width:92px;font-size:12px}
+    table{min-width:0}
+    thead{display:none}
+    tbody tr{display:block;padding:10px 4px;border-bottom:1px solid var(--line)}
+    tbody td{display:flex;justify-content:space-between;gap:14px;border-bottom:0;padding:4px 14px}
+    tbody td::before{content:attr(data-l);color:var(--ink3);font-size:12px;font-weight:700;flex:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brandbar" role="group" aria-label="انتخاب برند">
+    <span class="brandbar-lbl">برند:</span>
+    <button type="button" class="on" data-brand-choice="all" aria-pressed="true">همه</button>
+    <button type="button" data-brand-choice="alima" aria-pressed="false">آلیما — پنیر خرما</button>
+    <button type="button" data-brand-choice="zago" aria-pressed="false">زاگو — بیتاروتا</button>
+  </div>
+
+  <div data-brand="alima">
+  <header class="hero">
+    <h1>پروژه بلاگری پنیر خرما — آلیما</h1>
+    <p>سیدینگ میکروبلاگرهای دسر و شیرینی با پنیر خرما: دایرکت، قبول همکاری، ارسال محصول و انتظار برای محتوای صادقانه‌ی هر پیج — همه در یک نگاه.</p>
+    <div class="hero-meta">
+      <span>محصول: پنیر خرما</span>
+      <span>شروع: ۱۶ آبان ۱۴۰۵</span>
+      <span>آخرین به‌روزرسانی: شنبه ۲۳ آبان ۱۴۰۵</span>
+      <span>ارسال هفتگی: یکشنبه‌ها</span>
+    </div>
+  </header>
+
+  <!-- KPI -->
+  <div class="kpis">
+    <div class="kpi hl">
+      <div class="num">۱۸ <small>/ ۵۰ هدف</small></div>
+      <div class="lbl">دایرکت فرستاده شده</div>
+      <div class="sub">در ۴ بچ — از ۱۶ تا ۱۹ آبان</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۶</div>
+      <div class="lbl">قبول همکاری</div>
+      <div class="sub">از بچ ۱، ۲ و ۴ — تازه‌ترین: پالت‌سوئیت‌کیک (۱۹ آبان)</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۳</div>
+      <div class="lbl">محصول رسیده به دست بلاگر</div>
+      <div class="sub">هر سه تهرانی — ستایش، حنانه و ملینا</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۷۳</div>
+      <div class="lbl">پیج در لیست کل</div>
+      <div class="sub">۷ پیج غذای خونگی حذف شده — ۶۶ پیج فعال</div>
+    </div>
+  </div>
+
+  <!-- Goal progress -->
+  <div class="goal">
+    <div class="goal-top">
+      <h2>پیشرفت تا هدف ۵۰ بلاگر</h2>
+      <span class="pct">۳۶٪ از مسیر دایرکت</span>
+    </div>
+    <div class="bar"><i class="b1" style="width:12%"></i><i class="b2" style="width:24%"></i></div>
+    <div class="goal-legend">
+      <span><span class="dot" style="background:var(--brand2)"></span><b>۶ نفر</b> قبول کردن و وارد ارسال شدن</span>
+      <span><span class="dot" style="background:#d9a94e"></span><b>۱۲ نفر</b> دایرکت گرفتن و جوابشون در انتظاره (یا بی‌جواب موندن)</span>
+      <span><b>۳۲ نفر</b> تا سقف ۵۰ نفر باقی مونده</span>
+    </div>
+  </div>
+
+  <!-- Funnel + Rules -->
+  <section>
+    <div class="grid2">
+      <div class="card">
+        <h3>قیف پروژه — از لیست تا تحویل</h3>
+        <div class="funnel">
+          <div class="frow"><span class="fl">لیست کل</span><span class="ft"><i style="width:100%"></i></span><span class="fv">۷۳</span></div>
+          <div class="frow"><span class="fl">بعد از حذف غذای خونگی</span><span class="ft"><i style="width:90%"></i></span><span class="fv">۶۶</span></div>
+          <div class="frow"><span class="fl">دایرکت فرستاده</span><span class="ft"><i class="a" style="width:25%"></i></span><span class="fv">۱۸</span></div>
+          <div class="frow"><span class="fl">قبول همکاری</span><span class="ft"><i class="a" style="width:11%"></i></span><span class="fv">۶</span></div>
+          <div class="frow"><span class="fl">اطلاعات ارسال کامل</span><span class="ft"><i class="a" style="width:9%"></i></span><span class="fv">۵</span></div>
+          <div class="frow"><span class="fl">محصول رسیده</span><span class="ft"><i class="g" style="width:5.5%"></i></span><span class="fv">۳</span></div>
+        </div>
+        <p style="margin:12px 0 0;color:var(--ink2);font-size:12.5px">یک نفر از قبول‌کرده‌ها (فود فنجونی) اطلاعات ارسال نداد و پیگیریش فعلاً کنسل شد؛ برای همین از «قبول» تا «آماده ارسال» یکی کم می‌شود.</p>
+      </div>
+
+      <div class="card">
+        <h3>قوانین فعلی انتخاب پیج <span class="badge bg-blue">از ۱۹ آبان</span></h3>
+        <div class="rule"><span class="rn">۱</span><div><b>بازه فالوور: ۵۰۰ تا ۲٬۰۰۰</b><br><span style="color:var(--ink2);font-size:12.5px">کف ۵۰۰ — زیر این دیگه پیام نمی‌رود.</span></div></div>
+        <div class="rule"><span class="rn">۲</span><div><b>فقط دسر، شیرینی و کیک + لایف‌استایل</b><br><span style="color:var(--ink2);font-size:12.5px">لایف‌استایل‌هایی که محتوای غذا و صبحانه هم دارند.</span></div></div>
+        <div class="rule"><span class="rn">۳</span><div><b>غذای خونگی کاملاً خارج از لیست</b><br><span style="color:var(--ink2);font-size:12.5px">۷ پیج با همین قانون علامت خوردند و دیگر سراغشان نمی‌رویم.</span></div></div>
+        <div class="rule"><span class="rn">۴</span><div><b>اولویت با تهران است</b><br><span style="color:var(--ink2);font-size:12.5px">فعلاً بچ‌ها تهرانی‌اند؛ شهرستان با تیپاکس ارسال می‌شود.</span></div></div>
+        <div class="rule"><span class="rn">۵</span><div><b>خواسته از بلاگر: یک استوری با نظر صادقانه</b><br><span style="color:var(--ink2);font-size:12.5px">بدون قول تاریخ ارسال در جواب قبول — فقط «به‌زودی می‌فرستیم».</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Batches -->
+  <section>
+    <div class="sec-head"><h2>بچ‌های دایرکت</h2><p>هر بچ با کارت تایید جدا برای هر نفر ارسال شده</p></div>
+    <div class="card" style="padding-top:6px;padding-bottom:8px">
+      <div class="batch">
+        <div class="bnum"><b>۱</b><span>بچ</span></div>
+        <div class="bt"><b>شنبه ۱۶ آبان — ۵ نفر</b> <span class="badge bg-green">۳ قبول</span>
+          <p>ستایش کریمی (قبول + پیشنهاد ریل مشترک)، غزال عباسی از شیراز (قبول)، فود فنجونی (قبول اصولی، بعداً کنسل و حذف از لیست)، سحر و حنانه‌کیک (بی‌جواب — حنانه‌کیک فقط دایرکت را لایک کرد).</p></div>
+      </div>
+      <div class="batch">
+        <div class="bnum"><b>۲</b><span>بچ</span></div>
+        <div class="bt"><b>یکشنبه ۱۷ آبان — ۵ نفر</b> <span class="badge bg-green">۲ قبول</span>
+          <p>ملینا تمیزی (قبول + خودش پیشنهاد ریل داد) و حنانه جعفری‌نژاد از «خرمالو بیکری» (قبول، اطلاعات کامل فرستاد). امیزینگ دسرت، دولچه کیک‌هاوس و وانیلا هوم بی‌جواب ماندند.</p></div>
+      </div>
+      <div class="batch">
+        <div class="bnum"><b>۳</b><span>بچ</span></div>
+        <div class="bt"><b>سه‌شنبه ۱۹ آبان — ۳ نفر</b> <span class="badge bg-amber">در انتظار جواب</span>
+          <p>کوکی‌کال، کیمیا بیک و سین کیک‌هاوس — هر سه تهرانی، زیر قوانین قدیم فرستاده شدند (زیر ۵۰۰ فالوور) و جوابشان همچنان پایش می‌شود. دایرکت چهارمی (اهووان فود) تایید نشد و پیجش هم با قانون جدید از لیست خارج شد.</p></div>
+      </div>
+      <div class="batch">
+        <div class="bnum"><b>۴</b><span>بچ</span></div>
+        <div class="bt"><b>سه‌شنبه ۱۹ آبان — ۵ نفر</b> <span class="badge bg-green">۱ قبول</span>
+          <p>اولین بچ با قوانین جدید (۵۰۰ تا ۲٬۰۰۰، تهران): کوکی موکی (۱٬۰۵۴)، ژاوا سوئیتس (۱٬۷۴۱)، نوشا پستری (۵۲۶)، سوئیترلا (۹۳۳) و پالت سوئیت‌کیک (۱٬۷۰۳). پالت‌سوئیت‌کیک همان شب (۱۹ آبان، ۱۹:۳۰) قبول کرد و در ۱۹:۳۲ اطلاعات ارسال را فرستاد — در بچ ارسال یکشنبه ۲۴ آبان است؛ چهار نفر دیگر هنوز در انتظار جواب‌اند.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shipping -->
+  <section>
+    <div class="sec-head"><h2>وضعیت ارسال محصول</h2><p>تهران با اسنپ‌باکس — شهرستان با تیپاکس — بچ هفتگی یکشنبه‌ها ساعت ۹</p></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>بلاگر</th><th>پیج</th><th>شهر</th><th>وضعیت</th><th>قدم بعدی</th></tr></thead>
+        <tbody>
+          <tr>
+            <td data-l="بلاگر"><b>ملینا تمیزی</b></td>
+            <td data-l="پیج"><span class="handle">melin.cake</span></td>
+            <td data-l="شهر">تهران (شهران)</td>
+            <td data-l="وضعیت"><span class="badge bg-green">رسید — دوشنبه ۱۸ آبان</span></td>
+            <td data-l="قدم بعدی">خودش قول داده بود چیزکیک پنیر خرما را به اشتراک بگذارد، ولی تا ۲۳ آبان هنوز محتوایی منتشر نکرده؛ پیام پیگیری شنبه ۲۳ آبان برایش فرستاده شد و منتظر جوابش هستیم</td>
+          </tr>
+          <tr>
+            <td data-l="بلاگر"><b>ستایش کریمی</b></td>
+            <td data-l="پیج"><span class="handle">setia.pastry</span></td>
+            <td data-l="شهر">تهران (پیروزی)</td>
+            <td data-l="وضعیت"><span class="badge bg-green">رسید — سه‌شنبه ۱۹ آبان</span></td>
+            <td data-l="قدم بعدی">پیام «رسید؟ + محتوایت را با ما به اشتراک بگذار» فرستاده شد؛ تا بررسی ۲۳ آبان پیجش فعال بوده ولی هنوز محتوایی از پنیر خرما منتشر نکرده؛ پیشنهاد ریل مشترک خودش هم همچنان باز است</td>
+          </tr>
+          <tr>
+            <td data-l="بلاگر"><b>حنانه جعفری‌نژاد</b></td>
+            <td data-l="پیج"><span class="handle">khormaloo_bakery</span></td>
+            <td data-l="شهر">تهران (ولیعصر)</td>
+            <td data-l="وضعیت"><span class="badge bg-green">رسید — سه‌شنبه ۱۹ آبان</span></td>
+            <td data-l="قدم بعدی">پیام «رسید؟ + محتوایت را با ما به اشتراک بگذار» فرستاده شد؛ تا بررسی ۲۳ آبان هنوز محتوایی از پنیر خرما منتشر نکرده — ریل و استوری‌های اخیرش کارهای خودش بوده</td>
+          </tr>
+          <tr>
+            <td data-l="بلاگر"><b>غزال عباسی</b></td>
+            <td data-l="پیج"><span class="handle">dokhtar.joonoobi</span></td>
+            <td data-l="شهر">شیراز</td>
+            <td data-l="وضعیت"><span class="badge bg-amber">در انتظار ارسال</span></td>
+            <td data-l="قدم بعدی">در لیست ارسال یکشنبه ۲۴ آبان با تیپاکس قرار دارد؛ تصمیم نهایی حسین — ارسال در همین بچ یا نگه‌داشتن برای هفته‌ی بعد — هنوز باز است</td>
+          </tr>
+          <tr>
+            <td data-l="بلاگر"><b>پریسا کاظم‌پور</b></td>
+            <td data-l="پیج"><span class="handle">palletsweetcake</span></td>
+            <td data-l="شهر">تهران</td>
+            <td data-l="وضعیت"><span class="badge bg-blue">قبول کرد — ارسال یکشنبه ۲۴ آبان</span></td>
+            <td data-l="قدم بعدی">اطلاعات ارسال را ۱۹ آبان فرستاد؛ در بچ یکشنبه ۲۴ آبان با اسنپ‌باکس ارسال می‌شود — زمان‌بندی استوری هنوز مشخص نشده</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>نکته ارسال:</b> هر سه بسته تهرانی دوشنبه ۱۸ آبان با اسنپ‌باکس با هم رفتند و هر سه رسیدند. کد رهگیری برای هیچ‌کدام ثبت نشده — وضعیت‌ها بر اساس تایید خود بلاگرها و تایید حسین است.</div>
+  </section>
+
+  <!-- Creators list -->
+  <section>
+    <div class="sec-head"><h2>همه دایرکت‌خورده‌ها</h2><p>۱۸ نفر — با فیلتر وضعیت یا جست‌وجوی اسم پیج پیدا کن</p></div>
+    <div class="filters" id="filters">
+      <button class="on" data-f="all">همه (۱۸)</button>
+      <button data-f="accepted">قبول کرده (۶)</button>
+      <button data-f="waiting">در انتظار جواب (۷)</button>
+      <button data-f="noreply">بی‌جواب (۵)</button>
+      <input type="search" id="q" placeholder="جست‌وجو: اسم پیج یا بلاگر…" aria-label="جست‌وجو در لیست بلاگرها">
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>پیج</th><th>فالوور</th><th>دسته / شهر</th><th>بچ</th><th>وضعیت</th></tr></thead>
+        <tbody id="rows">
+          <tr data-s="accepted"><td data-l="پیج"><span class="handle">setia.pastry</span><div class="who">ستایش کریمی</div></td><td data-l="فالوور">۴۷۹</td><td data-l="دسته / شهر">شیرینی دست‌ساز — تهران</td><td data-l="بچ">۱</td><td data-l="وضعیت"><span class="badge bg-green">قبول — محصول رسید</span></td></tr>
+          <tr data-s="accepted"><td data-l="پیج"><span class="handle">dokhtar.joonoobi</span><div class="who">غزال عباسی</div></td><td data-l="فالوور">۶۸۸</td><td data-l="دسته / شهر">دسر جنوبی — شیراز</td><td data-l="بچ">۱</td><td data-l="وضعیت"><span class="badge bg-amber">قبول — در انتظار ارسال</span></td></tr>
+          <tr data-s="accepted"><td data-l="پیج"><span class="handle">food_fenjooni</span><div class="who">فود فنجونی</div></td><td data-l="فالوور">۶۸۹</td><td data-l="دسته / شهر">غذای خونگی — از لیست خارج شد</td><td data-l="بچ">۱</td><td data-l="وضعیت"><span class="badge bg-gray">قبول اصولی — پیگیری کنسل</span></td></tr>
+          <tr data-s="accepted"><td data-l="پیج"><span class="handle">melin.cake</span><div class="who">ملینا تمیزی</div></td><td data-l="فالوور">۳۳۷</td><td data-l="دسته / شهر">کیک تولد — تهران</td><td data-l="بچ">۲</td><td data-l="وضعیت"><span class="badge bg-green">قبول — محصول رسید</span></td></tr>
+          <tr data-s="accepted"><td data-l="پیج"><span class="handle">khormaloo_bakery</span><div class="who">حنانه جعفری‌نژاد</div></td><td data-l="فالوور">۹۸</td><td data-l="دسته / شهر">کیک و کوکی — تهران</td><td data-l="بچ">۲</td><td data-l="وضعیت"><span class="badge bg-green">قبول — محصول رسید</span></td></tr>
+          <tr data-s="noreply"><td data-l="پیج"><span class="handle">sahar__cook</span><div class="who">سحر</div></td><td data-l="فالوور">۳۹۳</td><td data-l="دسته / شهر">کیک و دسر خونگی</td><td data-l="بچ">۱</td><td data-l="وضعیت"><span class="badge bg-red">بی‌جواب</span></td></tr>
+          <tr data-s="noreply"><td data-l="پیج"><span class="handle">hanehcake</span><div class="who">حنانه‌کیک</div></td><td data-l="فالوور">۷۳۹</td><td data-l="دسته / شهر">کیک خونگی — تهران</td><td data-l="بچ">۱</td><td data-l="وضعیت"><span class="badge bg-red">فقط لایک کرد — بی‌جواب</span></td></tr>
+          <tr data-s="noreply"><td data-l="پیج"><span class="handle">amazingdesserts2026</span></td><td data-l="فالوور">۶۶۹</td><td data-l="دسته / شهر">دسر — تهران (اکباتان)</td><td data-l="بچ">۲</td><td data-l="وضعیت"><span class="badge bg-red">بی‌جواب</span></td></tr>
+          <tr data-s="noreply"><td data-l="پیج"><span class="handle">dolce_cakehouse</span></td><td data-l="فالوور">۹۳۳</td><td data-l="دسته / شهر">کیک سفارشی — تهران</td><td data-l="بچ">۲</td><td data-l="وضعیت"><span class="badge bg-red">بی‌جواب</span></td></tr>
+          <tr data-s="noreply"><td data-l="پیج"><span class="handle">vanilla_home20</span></td><td data-l="فالوور">۴۵۷</td><td data-l="دسته / شهر">کیک خونگی — تهران (بومهن)</td><td data-l="بچ">۲</td><td data-l="وضعیت"><span class="badge bg-red">بی‌جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">cookiecall.co</span></td><td data-l="فالوور">۱۰۳</td><td data-l="دسته / شهر">کوکی — تهران</td><td data-l="بچ">۳</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">kimia.bake</span></td><td data-l="فالوور">۱۵۲</td><td data-l="دسته / شهر">کوکی و رول دارچینی — تهران</td><td data-l="بچ">۳</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">cin.cakehouse</span></td><td data-l="فالوور">۳۴۸</td><td data-l="دسته / شهر">کیک و کاپ‌کیک — تهران</td><td data-l="بچ">۳</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">coockie__mookie</span></td><td data-l="فالوور">۱٬۰۵۴</td><td data-l="دسته / شهر">کوکی و کیک — تهران</td><td data-l="بچ">۴</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">zhava_sweets</span></td><td data-l="فالوور">۱٬۷۴۱</td><td data-l="دسته / شهر">کیک و کوکی — تهران</td><td data-l="بچ">۴</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">newshapastry</span></td><td data-l="فالوور">۵۲۶</td><td data-l="دسته / شهر">کوکی — تهران (غرب)</td><td data-l="بچ">۴</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="waiting"><td data-l="پیج"><span class="handle">sweetrella.homebakes</span></td><td data-l="فالوور">۹۳۳</td><td data-l="دسته / شهر">کوکی و کیک — تهران</td><td data-l="بچ">۴</td><td data-l="وضعیت"><span class="badge bg-amber">در انتظار جواب</span></td></tr>
+          <tr data-s="accepted"><td data-l="پیج"><span class="handle">palletsweetcake</span><div class="who">پریسا کاظم‌پور</div></td><td data-l="فالوور">۱٬۷۰۳</td><td data-l="دسته / شهر">کیک سفارشی و چیزکیک — تهران</td><td data-l="بچ">۴</td><td data-l="وضعیت"><span class="badge bg-green">قبول — ارسال یکشنبه ۲۴ آبان</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p id="empty" style="display:none;color:var(--ink2);font-size:13.5px;margin-top:10px">چیزی با این فیلتر پیدا نشد.</p>
+  </section>
+
+  <!-- Next steps + queue -->
+  <section>
+    <div class="grid2b">
+      <div class="card">
+        <h3>صف بعدی تهران — آماده بچ ۵</h3>
+        <p style="margin:0 0 6px;color:var(--ink2);font-size:12.5px">۷ تهرانی در بازه ۵۰۰ تا ۲٬۰۰۰ که هنوز دایرکت نگرفته‌اند:</p>
+        <ul class="tick">
+          <li><span><span class="handle">areezo_cake</span> — ۱٬۵۹۷ — کیک خونگی</span></li>
+          <li><span><span class="handle">instafoood.ir</span> — ۱٬۴۳۴ — لایف‌استایل با محتوای غذا</span></li>
+          <li><span><span class="handle">darchinehcake</span> — ۱٬۲۹۷ — کیک، دسر و موچی</span></li>
+          <li><span><span class="handle">mozhan.bakery</span> — ۱٬۱۱۸ — کیک و شیرینی</span></li>
+          <li><span><span class="handle">sweet.moon.mahsa</span> — ۱٬۱۴۸ — کیک تولد و شیرینی</span></li>
+          <li><span><span class="handle">cake.makron.pirozi</span> — ۷۳۵ — کیک خونگی (پیروزی)</span></li>
+          <li><span><span class="handle">delicate_maya</span> — ۶۶۷ — کیک سفارشی (غرب تهران)</span></li>
+        </ul>
+      </div>
+      <div class="cards-stack">
+        <div class="card">
+          <h3>کارهای باز</h3>
+          <ul class="tick">
+            <li><span><b>پایش جواب بچ ۳ و ۴</b> — ۷ نفر همچنان در انتظار جواب‌اند. قبول‌های تازه وارد بچ ارسال یکشنبه ۲۴ آبان می‌شوند.</span></li>
+            <li><span><b>پالت‌سوئیت‌کیک</b> — قبول کرد و اطلاعات ارسال فرستاد؛ در بچ ارسال یکشنبه ۲۴ آبان است (تهران، اسنپ‌باکس). سوال باز: زمان‌بندی استوری هنوز مشخص نشده.</span></li>
+            <li><span><b>بسته غزال (شیراز)</b> — در لیست ارسال یکشنبه ۲۴ آبان با تیپاکس است؛ تصمیم نهایی حسین برای ارسال در همین بچ یا هفته‌ی بعد هنوز باز است.</span></li>
+            <li><span><b>محتوای ملینا</b> — تا ۲۳ آبان چیزکیک پنیر خرما را منتشر نکرده؛ پیام پیگیری شنبه ۲۳ آبان فرستاده شد و منتظر جواب و محتوای او هستیم.</span></li>
+            <li><span><b>محتوای ستایش و حنانه</b> — هر دو رسید محصول را تایید کرده‌اند ولی تا بررسی ۲۳ آبان هیچ‌کدام محتوایی از پنیر خرما منتشر نکرده‌اند؛ ریل مشترک با ستایش (پیشنهاد خودش) همچنان منتظر محتوای اوست.</span></li>
+            <li><span><b>بچ ۵</b> — ۷ تهرانی آماده در صف‌اند (ستون کناری)؛ هر نفر با کارت تایید جدا.</span></li>
+          </ul>
+        </div>
+        <div class="card" style="background:var(--card2)">
+          <h3>گزارش یک‌ماهه — ۱۹ آذر ۱۴۰۵ (۱۰ دسامبر)</h3>
+          <p style="margin:0;font-size:13.5px;color:var(--ink2)">در پایان ماه اول مشخص می‌شود چه تیپ پیج‌هایی قبول می‌کنند پست و استوری بروند — به تفکیک بازه فالوور، نوع فعالیت (دسر / کیک / لایف‌استایل) و شهر. داده‌های بچ ۱ تا ۳ که با قوانین قدیم رفتند هم در همین تحلیل حساب می‌شوند.</p>
+          <p style="margin:10px 0 0;font-size:13.5px"><b>برداشت اولیه تا امروز:</b> در دو بچ اول، ۵ از ۱۰ نفر جواب دادند و هر ۵ قبول کردند — یعنی مسئله فعلاً «جواب گرفتن» است، نه «قبول کردن». پیج‌های کیک و شیرینیِ سفارشی تهران بهترین پاسخ را داده‌اند و دو نفر از قبول‌کرده‌ها خودشان بیشتر از یک استوری پیشنهاد دادند (ریل و ریل مشترک).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /alima -->
+
+  <!-- ================= ZAGO BITARUTA ================= -->
+  <div class="divider" id="brandDivider"><span>پروژه دوم — برند دیگر، همان روش دونه‌دونه</span></div>
+
+  <div data-brand="zago">
+  <header class="hero hero-zago" style="margin-top:14px">
+    <h1>پروژه بلاگری بیتاروتا — زاگو</h1>
+    <p>گیفتینگ نوشیدنی بیتاروتا به میکروکریتورهای تهران و کرج: لیست ۱۵ نفره از دل حدود ۳٬۴۰۰ غربال، بررسی دونه‌دونه با لینک پیج و تایید حسین، و بعد پیام از پیج زاگو.</p>
+    <div class="hero-meta">
+      <span>محصول: بیتاروتا — زاگو</span>
+      <span>پیج فرستنده: <span class="handle" style="color:#fff8ec">zago.drinks</span></span>
+      <span>لیست و بررسی: سه‌شنبه ۱۹ آبان ۱۴۰۵</span>
+      <span>آخرین وضعیت: شنبه ۲۳ آبان ۱۴۰۵ — ۶ جواب از ۷ پیام</span>
+    </div>
+  </header>
+
+  <div class="kpis kpis5">
+    <div class="kpi hl">
+      <div class="num">۱۵</div>
+      <div class="lbl">نفر در لیست نهایی</div>
+      <div class="sub">از هدف ۶۰ نفره — لیست عمداً پر نشده؛ فقط تاییدشده‌ها</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۷</div>
+      <div class="lbl">پیام فرستاده‌شده</div>
+      <div class="sub">هر ۷ پیام با تایید روی کارت — ۱۹ آبان، بین ۱۸:۵۱ تا ۱۹:۱۰؛ ۳ نفر هم بعد از بررسی لینک رد شدند و پیام نگرفتند</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۶ <small>از ۷</small></div>
+      <div class="lbl">جواب دادند</div>
+      <div class="sub">۵ قبول و ۱ تعرفه (در انتظار تصمیم) — فقط زهرا علیزاده هنوز جواب نداده</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۵</div>
+      <div class="lbl">قبول همکاری</div>
+      <div class="sub">۴ نفر اطلاعات ارسال کامل فرستادند: عسل، شبنم، الناز و پاراس — تهران مروی قبول کرد ولی هنوز اطلاعات ارسال نفرستاده</div>
+    </div>
+    <div class="kpi">
+      <div class="num">۵</div>
+      <div class="lbl">نفر دست‌نخورده</div>
+      <div class="sub">ردیف ۱۱ تا ۱۵ لیست — هنوز شروع نشده‌اند</div>
+    </div>
+  </div>
+
+  <div class="goal">
+    <div class="goal-top">
+      <h2>پیشرفت بررسی لیست ۱۵ نفره</h2>
+      <span class="pct">۱۰ از ۱۵ نفر بررسی شده</span>
+    </div>
+    <div class="bar"><i style="background:var(--green);width:46.7%"></i><i style="background:var(--red);width:20%"></i><i style="background:var(--line2);width:33.3%"></i></div>
+    <div class="goal-legend">
+      <span><span class="dot" style="background:var(--green)"></span><b>۷ نفر</b> پیام گرفتند</span>
+      <span><span class="dot" style="background:var(--red)"></span><b>۳ نفر</b> بعد از دیدن لینک پیج رد شدند</span>
+      <span><span class="dot" style="background:var(--line2)"></span><b>۵ نفر</b> هنوز دست‌نخورده‌اند</span>
+      <span>از ۷ پیام، ۶ جواب آمد: ۵ قبول — عسل، شبنم، الناز و پاراس با اطلاعات ارسال کامل و تهران مروی بدون اطلاعات ارسال — و سحر تعرفه فرستاد و در انتظار تصمیم مدیریت است؛ فقط زهرا علیزاده هنوز جواب نداده</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="grid2">
+      <div class="card">
+        <h3>محصول در یک نگاه — از فایل منبع</h3>
+        <div class="rule"><span class="rn">۱</span><div><b>۴۰٪ آب چغندر و هویج سیاه</b><br><span style="color:var(--ink2);font-size:12.5px">نوشیدنی گازدار، الهام‌گرفته از شالگام ترکیه.</span></div></div>
+        <div class="rule"><span class="rn">۲</span><div><b>شیرین نیست — ترش، شور و کمی تند</b><br><span style="color:var(--ink2);font-size:12.5px">زاویه‌ی پیام هم دقیقاً همین تفاوت است.</span></div></div>
+        <div class="rule"><span class="rn">۳</span><div><b>فقط بزرگسال — میز مزه‌ی عصرانه با دوستان</b><br><span style="color:var(--ink2);font-size:12.5px">موقعیت مصرف: دورهمی و موکتل‌سازی.</span></div></div>
+        <div class="rule"><span class="rn">۴</span><div><b>بازه‌ی نهایی لیست: ۵۰۰ تا ۵٬۰۰۰ فالوور — تهران و کرج</b><br><span style="color:var(--ink2);font-size:12.5px">بعد از شل‌کردن قوانین دور دوم؛ پوشش دسته‌ها: میزبانی ۳، مرور غذا ۴، نوشیدنی خانگی ۰، گردش غذا ۵، کافه و شب‌گردی ۳.</span></div></div>
+      </div>
+      <div class="card">
+        <h3>قانون دونه‌دونه <span class="badge bg-blue">روش قطعی حسین</span></h3>
+        <div class="step-flow">
+          <div class="sf"><b>۱ ـ لینک پیج</b>اول لینک پیج نفر بعدی برای حسین فرستاده می‌شود</div><span class="arr">←</span>
+          <div class="sf"><b>۲ ـ تایید پیج</b>حسین پیج را می‌بیند؛ تایید یا رد</div><span class="arr">←</span>
+          <div class="sf"><b>۳ ـ متن پیام</b>پیام پیشنهادی همان نفر نمایش داده می‌شود</div><span class="arr">←</span>
+          <div class="sf"><b>۴ ـ تایید و ارسال</b>فقط بعد از تایید دوم پیام می‌رود؛ بعد سراغ نفر بعدی</div>
+        </div>
+        <p style="margin:12px 0 0;color:var(--ink2);font-size:12.5px">هر سه ردشده‌ی این پروژه دقیقاً در قدم ۲ اتفاق افتادند — لینک دیده شد و پیامی نفرستادیم. برای شبنم، جمله‌ی مخصوص پیجش دو بار با نظر حسین اصلاح شد و در نهایت «خیلی از استایل پیجت خوشمون اومد» ماند.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>۱۵ کریتور بیتاروتا — وضعیت هر نفر</h2><p>به ترتیب لیست منبع: اول ۵ نفر دور سخت‌گیرانه، بعد ۱۰ نفر دور دوم</p></div>
+    <div class="filters" id="zfilters">
+      <button class="on" data-f="all">همه (۱۵)</button>
+      <button data-f="sent">پیام فرستاده‌شده (۷)</button>
+      <button data-f="rejected">ردشده (۳)</button>
+      <button data-f="untouched">دست‌نخورده (۵)</button>
+      <input type="search" id="zq" placeholder="جست‌وجو: اسم پیج…" aria-label="جست‌وجو در لیست بیتاروتا">
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>#</th><th>پیج</th><th>فالوور</th><th>دسته / شهر</th><th>امتیاز تناسب</th><th>وضعیت</th></tr></thead>
+        <tbody id="zrows">
+          <tr data-s="sent"><td data-l="#">۱</td><td data-l="پیج"><span class="handle">ellnaz.fkri</span><div class="who">آشپزی خانگی و تست بدون تعارف</div></td><td data-l="فالوور">۵۹۱</td><td data-l="دسته / شهر">مرور صادقانه غذا — تهران (تجریش)</td><td data-l="امتیاز تناسب">۴ از ۵</td><td data-l="وضعیت"><span class="badge bg-green">قبول کرد — اطلاعات ارسال کامل</span><div class="who">اطلاعات ارسال را ۲۰ آبان — ۰۹:۵۰ فرستاد؛ پیام تاییدیه ۱۰:۴۹ ارسال شد و ۱۰:۵۳ تایید کرد («بله حتما»)؛ بسته‌اش در بچ یکشنبه ۲۴ آبان است — قبل از ارسال هماهنگ شود، تحویل در لابی</div></td></tr>
+          <tr data-s="rejected"><td data-l="#">۲</td><td data-l="پیج"><span class="handle">food.tourwithme</span><div class="who">تور غذای تهران — بازار بزرگ و کباب</div></td><td data-l="فالوور">۱٬۶۱۸</td><td data-l="دسته / شهر">گردش غذا — تهران</td><td data-l="امتیاز تناسب">۴ از ۵</td><td data-l="وضعیت"><span class="badge bg-red">رد شد</span><div class="who">بعد از بررسی لینک — پیام نفرستادیم</div></td></tr>
+          <tr data-s="sent"><td data-l="#">۳</td><td data-l="پیج"><span class="handle">zahraaalizadeh_</span><div class="who">کافه‌گردی و معرفی مکان‌های تهران</div></td><td data-l="فالوور">۱٬۳۶۴</td><td data-l="دسته / شهر">گردش غذا — تهران (تجریش)</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-amber">هنوز جواب نداده</span><div class="who">پیام ۱۹ آبان — ۱۸:۵۳ فرستاده شد</div></td></tr>
+          <tr data-s="rejected"><td data-l="#">۴</td><td data-l="پیج"><span class="handle">mahnaz_heidari___</span><div class="who">معرفی کافه‌های تهران</div></td><td data-l="فالوور">۱٬۸۰۸</td><td data-l="دسته / شهر">مرور صادقانه غذا — تهران</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-red">رد شد</span><div class="who">بعد از بررسی لینک — پیام نفرستادیم</div></td></tr>
+          <tr data-s="sent"><td data-l="#">۵</td><td data-l="پیج"><span class="handle">paras2tavousi</span><div class="who">معرفی جاهای غذایی شرق تهران</div></td><td data-l="فالوور">۸۰۷</td><td data-l="دسته / شهر">مرور صادقانه غذا — شرق تهران</td><td data-l="امتیاز تناسب">۲ از ۵</td><td data-l="وضعیت"><span class="badge bg-green">قبول کرد — اطلاعات ارسال کامل</span><div class="who">اطلاعات ارسال ۲۰ آبان — ۱۶:۰۲ رسید؛ در لیست ارسال یکشنبه ۲۴ آبان است — هماهنگی ارسال با آقای کیایی‌نیا است و روز ارسال باید در دایرکت به او گفته شود</div></td></tr>
+          <tr data-s="rejected"><td data-l="#">۶</td><td data-l="پیج"><span class="handle">foodism.kian</span><div class="who">مرور صادقانه رستوران‌های تهران</div></td><td data-l="فالوور">۴٬۹۰۹</td><td data-l="دسته / شهر">مرور صادقانه غذا — تهران</td><td data-l="امتیاز تناسب">۴ از ۵</td><td data-l="وضعیت"><span class="badge bg-red">رد شد</span><div class="who">بعد از بررسی لینک — پیام نفرستادیم</div></td></tr>
+          <tr data-s="sent"><td data-l="#">۷</td><td data-l="پیج"><span class="handle">tehran_marvii</span><div class="who">زندگی شهری تهران و غذای بازار</div></td><td data-l="فالوور">۲٬۳۵۹</td><td data-l="دسته / شهر">گردش غذا — تهران</td><td data-l="امتیاز تناسب">۴ از ۵</td><td data-l="وضعیت"><span class="badge bg-blue">قبول کرد — بدون اطلاعات ارسال</span><div class="who">۲۰ آبان — ۱۴:۳۵ جواب داد و قبول کرد؛ هنوز اطلاعات ارسال نفرستاده و یادآوری یکشنبه ۲۴ آبان برای هماهنگی ارسال به او بدهکاریم</div></td></tr>
+          <tr data-s="sent"><td data-l="#">۸</td><td data-l="پیج"><span class="handle">asalhtmi</span><div class="who">کافه‌گردی و استایل تهران</div></td><td data-l="فالوور">۲٬۲۶۹</td><td data-l="دسته / شهر">گردش غذا — تهران</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-green">قبول کرد</span><div class="who">۱۹ آبان — ۱۹:۳۸ قبول کرد و اطلاعات ارسال فرستاد؛ پیام تاییدیه ۲۰:۴۱ فرستاده شد؛ بسته‌اش در بچ ارسال یکشنبه ۲۴ آبان است</div></td></tr>
+          <tr data-s="sent"><td data-l="#">۹</td><td data-l="پیج"><span class="handle">shabnam__kitchen</span><div class="who">میزچینی و میزبانی — فینگرفود تهران</div></td><td data-l="فالوور">۲٬۶۴۲</td><td data-l="دسته / شهر">میزبانی و میز دورهمی — تهران</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-green">قبول کرد</span><div class="who">۱۹ آبان — ۲۳:۳۶ قبول کرد و اطلاعات ارسال فرستاد؛ پیام تاییدیه ۲۰ آبان — ۰۸:۱۳ فرستاده شد؛ ۱۰:۱۷ به تاییدیه واکنش 🙏 نشان داد و ۱۵:۲۶ دوباره پیام داد: «قبل فرستادن حتما هماهنگ کنید»؛ بسته‌اش در بچ ارسال یکشنبه ۲۴ آبان است — قبل از ارسال حتماً هماهنگ شود</div></td></tr>
+          <tr data-s="sent"><td data-l="#">۱۰</td><td data-l="پیج"><span class="handle">itssaharkhani</span><div class="who">کافه و شب‌گردی تهران</div></td><td data-l="فالوور">۲٬۲۰۵</td><td data-l="دسته / شهر">کافه و شب‌گردی — تهران</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-amber">تعرفه فرستاد — در انتظار تصمیم</span><div class="who">۲۰ آبان — ۱۰:۲۳ تعرفه فرستاد: پکیج ۱٬۵۰۰٬۰۰۰ تومان، استوری ۵۰۰٬۰۰۰ تومان — و پست را به‌جای استوری پیشنهاد می‌کند؛ پیام تشکر ۱۱:۳۰ ارسال شد و او ۱۲:۵۳ دوباره پیام داد و روی پست اصرار کرد؛ حسین گفت فعلاً کاری انجام نشود و تصمیم مدیریت هنوز گرفته نشده</div></td></tr>
+          <tr data-s="untouched"><td data-l="#">۱۱</td><td data-l="پیج"><span class="handle">rokh.moments</span><div class="who">شب‌های گروهی هفتگی تهران (درکه، چیتگر)</div></td><td data-l="فالوور">۳٬۷۴۶</td><td data-l="دسته / شهر">میزبانی و میز دورهمی — تهران</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-gray">دست‌نخورده</span><div class="who">حساب برگزارکننده گروه است، نه یک نفر — پرچم‌دار برای قضاوت حسین</div></td></tr>
+          <tr data-s="untouched"><td data-l="#">۱۲</td><td data-l="پیج"><span class="handle">adamgardi.club</span><div class="who">باشگاه دورهمی فیلم و گفت‌وگو — هفت‌تیر</div></td><td data-l="فالوور">۵۵۱</td><td data-l="دسته / شهر">میزبانی و میز دورهمی — تهران</td><td data-l="امتیاز تناسب">۳ از ۵</td><td data-l="وضعیت"><span class="badge bg-gray">دست‌نخورده</span><div class="who">حساب باشگاه است، نه یک نفر — پرچم‌دار برای قضاوت حسین</div></td></tr>
+          <tr data-s="untouched"><td data-l="#">۱۳</td><td data-l="پیج"><span class="handle">tourism_soheylyo</span><div class="who">گردش یک‌روزه و تاریخ تهران</div></td><td data-l="فالوور">۷۴۹</td><td data-l="دسته / شهر">گردش غذا — تهران</td><td data-l="امتیاز تناسب">۲ از ۵</td><td data-l="وضعیت"><span class="badge bg-gray">دست‌نخورده</span><div class="who">غذا در محتوایش حاشیه‌ای است</div></td></tr>
+          <tr data-s="untouched"><td data-l="#">۱۴</td><td data-l="پیج"><span class="handle">cafe.karaj.cozy</span><div class="who">راهنمای کافه‌های کرج</div></td><td data-l="فالوور">۱٬۴۹۷</td><td data-l="دسته / شهر">کافه و شب‌گردی — کرج</td><td data-l="امتیاز تناسب">۲ از ۵</td><td data-l="وضعیت"><span class="badge bg-gray">دست‌نخورده</span><div class="who">محتوا احتمالاً بازنشر است — پرچم‌دار در منبع</div></td></tr>
+          <tr data-s="untouched"><td data-l="#">۱۵</td><td data-l="پیج"><span class="handle">thesoggoli</span><div class="who">معرفی کافه و لانژ تهران و کرج</div></td><td data-l="فالوور">۴٬۰۹۲</td><td data-l="دسته / شهر">کافه و شب‌گردی — تهران و کرج</td><td data-l="امتیاز تناسب">۲ از ۵</td><td data-l="وضعیت"><span class="badge bg-gray">دست‌نخورده</span><div class="who">کامنت‌ها کم‌جان‌اند — ضعیف‌ترین عضو دور دوم</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p id="zempty" style="display:none;color:var(--ink2);font-size:13.5px;margin-top:10px">چیزی با این فیلتر پیدا نشد.</p>
+  </section>
+
+  <section>
+    <div class="grid2b">
+      <div class="card">
+        <h3>متن پیام تاییدشده <span class="badge bg-green">تایید حسین — ۱۹ آبان، ۱۸:۴۱</span></h3>
+        <div class="dm-box">سلام [نام] جان 🌸
+من از تیم زاگو هستم. پیجت رو دیدم، [جمله‌ی مخصوص هر پیج].
+می‌خواستیم نوشیدنی بیتاروتامون رو برات بفرستیم که تستش کنی؛ یه نوشیدنی گازداره که از شالگام ترکیه الهام گرفته شده — ترش و شور، شیرین نیست — برای دورهمی‌ها و موکتل درست کردن یه گزینه‌ی عالی و متفاوته.
+اگه دوست داشتی، فقط یه استوری ازش بذار و نظرت رو بگو. هدیه‌ست، هزینه‌ای نداره.
+اگه موافقی، اسم و شماره و آدرست رو بفرست تا ارسال کنیم 🙏</div>
+        <p style="margin:10px 0 0;color:var(--ink2);font-size:12.5px">ارسال از پیج <span class="handle">zago.drinks</span> — برای هر نفر فقط جمله‌ی داخل کروشه با خود پیجش تنظیم می‌شود؛ بقیه‌ی متن ثابت است.</p>
+      </div>
+      <div class="cards-stack">
+        <div class="card">
+          <h3>کارهای باز زاگو</h3>
+          <ul class="tick">
+            <li><span><b>بچ یکشنبه ۲۴ آبان</b> — ۴ بسته‌ی تهرانی با اسنپ‌باکس ارسال می‌شود: عسل asalhtmi، شبنم shabnam__kitchen، الناز ellnaz.fkri و پاراس paras2tavousi. قبل از ارسال با شبنم و الناز حتماً هماهنگ شود (تحویل الناز در لابی است) و روز ارسال پاراس در دایرکت به او گفته شود؛ هماهنگی پاراس با آقای کیایی‌نیا است.</span></li>
+            <li><span><b>درخواست اطلاعات ارسال از تهران مروی</b> — tehran_marvii قبول کرده ولی هنوز اطلاعات ارسال نفرستاده؛ یادآوری یکشنبه ۲۴ آبان برای هماهنگی ارسال به او بدهکاریم و متن پیام با تایید حسین فرستاده می‌شود.</span></li>
+            <li><span><b>پاراس در بچ یکشنبه</b> — اطلاعات ارسال paras2tavousi از ۲۰ آبان کامل است و بسته‌اش در بچ یکشنبه ۲۴ آبان قرار گرفت؛ فقط اعلام روز ارسال در دایرکت مانده است.</span></li>
+            <li><span><b>تصمیم مدیریت درباره‌ی تعرفه سحر</b> — itssaharkhani تعرفه فرستاده (پکیج ۱٬۵۰۰٬۰۰۰ تومان، استوری ۵۰۰٬۰۰۰ تومان) و روی پست به‌جای استوری اصرار دارد؛ حسین گفت فعلاً کاری انجام نشود تا تصمیم مدیریت گرفته شود.</span></li>
+            <li><span><b>پایش ۱ نفر بی‌جواب</b> — زهرا علیزاده (zahraaalizadeh_) تنها نفری است که هنوز جواب نداده.</span></li>
+            <li><span><b>۵ نفر آخر لیست</b> — ردیف ۱۱ تا ۱۵ دست‌نخورده‌اند (rokh.moments، adamgardi.club، tourism_soheylyo، cafe.karaj.cozy و thesoggoli)؛ ادامه فقط با همان قانون دونه‌دونه و از نفر ۱۱.</span></li>
+          </ul>
+        </div>
+        <div class="note" style="margin-top:0"><b>چرا لیست ۱۵ نفره ماند؟</b> منبع می‌گوید از حدود ۳٬۴۰۰ غربال در دو دور، فقط همین ۱۵ نفر همه‌ی شرط‌ها را داشتند و لیست عمداً با پیج نامرتبط پر نشد؛ دسته‌ی «نوشیدنی خانگی و موکتل» در کل غربال حتی یک نفر هم نداشت.</div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /zago -->
+
+  <footer>
+    داشبورد پروژه بلاگری پنیر خرما — آلیما · اعداد بر اساس وضعیت ثبت‌شده تا شنبه ۲۳ آبان ۱۴۰۵ (۱۴ نوامبر ۲۰۲۶)<br>
+    بخش زاگو بیتاروتا از فایل لیست کریتورهای بیتاروتا (بررسی و ارسال‌های ۱۹ آبان و جواب‌ها و وضعیت ارسال تا شنبه ۲۳ آبان ۱۴۰۵) — بدون عدد ساخته‌شده.<br>
+    شماره تماس و آدرس بلاگرها عمداً در این داشبورد نیامده و فقط در فایل ارسال نگهداری می‌شود.
+  </footer>
+</div>
+
+<script>
+(function(){
+  var btns=document.querySelectorAll('#filters button');
+  var rows=document.querySelectorAll('#rows tr');
+  var q=document.getElementById('q');
+  var empty=document.getElementById('empty');
+  var cur='all';
+  function apply(){
+    var term=(q.value||'').trim().toLowerCase(); var n=0;
+    rows.forEach(function(r){
+      var okF=(cur==='all'||r.getAttribute('data-s')===cur);
+      var okQ=(!term||r.textContent.toLowerCase().indexOf(term)>-1);
+      var show=okF&&okQ; r.style.display=show?'':'none'; if(show)n++;
+    });
+    empty.style.display=n?'none':'block';
+  }
+  btns.forEach(function(b){ b.addEventListener('click',function(){
+    btns.forEach(function(x){x.classList.remove('on')}); b.classList.add('on'); cur=b.getAttribute('data-f'); apply();
+  });});
+  q.addEventListener('input',apply);
+})();
+(function(){
+  var btns=document.querySelectorAll('#zfilters button');
+  var rows=document.querySelectorAll('#zrows tr');
+  var q=document.getElementById('zq');
+  var empty=document.getElementById('zempty');
+  if(!q) return;
+  var cur='all';
+  function apply(){
+    var term=(q.value||'').trim().toLowerCase(); var n=0;
+    rows.forEach(function(r){
+      var okF=(cur==='all'||r.getAttribute('data-s')===cur);
+      var okQ=(!term||r.textContent.toLowerCase().indexOf(term)>-1);
+      var show=okF&&okQ; r.style.display=show?'':'none'; if(show)n++;
+    });
+    empty.style.display=n?'none':'block';
+  }
+  btns.forEach(function(b){ b.addEventListener('click',function(){
+    btns.forEach(function(x){x.classList.remove('on')}); b.classList.add('on'); cur=b.getAttribute('data-f'); apply();
+  });});
+  q.addEventListener('input',apply);
+})();
+(function(){
+  var btns=document.querySelectorAll('[data-brand-choice]');
+  var blocks=document.querySelectorAll('[data-brand]');
+  var divider=document.getElementById('brandDivider');
+  function applyBrand(choice){
+    blocks.forEach(function(b){
+      b.style.display=(choice==='all'||b.getAttribute('data-brand')===choice)?'':'none';
+    });
+    if(divider) divider.style.display=(choice==='all')?'':'none';
+    btns.forEach(function(b){
+      var on=b.getAttribute('data-brand-choice')===choice;
+      b.classList.toggle('on',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
+  }
+  btns.forEach(function(b){ b.addEventListener('click',function(){
+    applyBrand(b.getAttribute('data-brand-choice'));
+    window.scrollTo({top:0,behavior:'smooth'});
+  });});
+  applyBrand('all');
+})();
+</script>
+</body>
+</html>
